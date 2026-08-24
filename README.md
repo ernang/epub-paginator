@@ -4,6 +4,28 @@ Un script en Python que añade paginación aproximada compatible con el estánda
 
 Ideal para dotar a los EPUBs fluidos (*reflowable*) de números de página de referencia, permitiendo una mejor navegación y manteniendo la compatibilidad con lectores modernos que soportan `page-list`.
 
+> 💡 **Nota importante:** Este proyecto está diseñado y optimizado específicamente para procesar **archivos EPUB resultantes de convertir libros desde formato MOBI mediante Calibre**. El script detecta automáticamente el patrón de nomenclatura y la estructura interna (`index_split_*.html`) que genera Calibre en este tipo de conversiones.
+
+---
+
+## Características
+
+- **Optimizado para Calibre:** Detecta e identifica de forma inteligente la estructura `index_split` generada tras convertir de MOBI a EPUB para iniciar la paginación en el lugar correcto.
+- **Paginación automática:** Calcula el número de página insertando saltos basados en la cantidad aproximada de caracteres visibles (por defecto 1500).
+- **Compatible con EPUB 3:** Inyecta etiquetas `<span epub:type="pagebreak">` e integra la lista de páginas en el archivo de navegación (`nav.xhtml` mediante `<nav epub:type="page-list">`).
+- **Seguro y validado:** No sobreescribe tu archivo original por defecto. Además, valida que el XML siga estando bien formado antes de empaquetar el nuevo EPUB.
+- **Soporte CLI y GUI:** Funciona tanto mediante línea de comandos (usando solo la biblioteca estándar de Python) como mediante interfaz gráfica.
+
+---
+
+## Requisitos
+
+- **Python 3.6 o superior**.
+- **Librerías estándar:** No se requieren librerías de terceros para la versión de consola.
+- *(Opcional)* `customtkinter` si deseas ejecutar o compilar la versión con interfaz gráfica avanzada:
+  ```bash
+  pip install customtkinter
+
 ## Características
 
 - **Paginación automática:** Calcula el número de página insertando saltos basados en la cantidad aproximada de caracteres visibles (por defecto 1500).
