@@ -1,0 +1,2 @@
+# Python 3.10+
+customtkinter>=5.2.0

@@ -1,94 +1,250 @@
-# EPUB 3 Page Break Generator
+# EPUB Page Break Generator
 
-Un script en Python que añade paginación aproximada compatible con el estándar EPUB 3 a libros electrónicos (EPUB) existentes. 
+Aplicación de escritorio en Python para añadir una paginación aproximada a archivos EPUB 2 y EPUB 3 mediante una interfaz gráfica moderna.
 
-Ideal para dotar a los EPUBs fluidos (*reflowable*) de números de página de referencia, permitiendo una mejor navegación y manteniendo la compatibilidad con lectores modernos que soportan `page-list`.
-
-> 💡 **Nota importante:** Este proyecto está diseñado y optimizado específicamente para procesar **archivos EPUB resultantes de convertir libros desde formato MOBI mediante Calibre**. El script detecta automáticamente el patrón de nomenclatura y la estructura interna (`index_split_*.html`) que genera Calibre en este tipo de conversiones.
-
----
+El programa analiza el texto visible del libro, inserta marcadores de página y actualiza los documentos de navegación internos del EPUB. El archivo original no se modifica: el resultado se guarda como un nuevo EPUB.
 
 ## Características
 
-- **Optimizado para Calibre:** Detecta e identifica de forma inteligente la estructura `index_split` generada tras convertir de MOBI a EPUB para iniciar la paginación en el lugar correcto.
-- **Paginación automática:** Calcula el número de página insertando saltos basados en la cantidad aproximada de caracteres visibles (por defecto 1500).
-- **Compatible con EPUB 3:** Inyecta etiquetas `<span epub:type="pagebreak">` e integra la lista de páginas en el archivo de navegación (`nav.xhtml` mediante `<nav epub:type="page-list">`).
-- **Seguro y validado:** No sobreescribe tu archivo original por defecto. Además, valida que el XML siga estando bien formado antes de empaquetar el nuevo EPUB.
-- **Soporte CLI y GUI:** Funciona tanto mediante línea de comandos (usando solo la biblioteca estándar de Python) como mediante interfaz gráfica.
-
----
-
-## Requisitos
-
-- **Python 3.6 o superior**.
-- **Librerías estándar:** No se requieren librerías de terceros para la versión de consola.
-- *(Opcional)* `customtkinter` si deseas ejecutar o compilar la versión con interfaz gráfica avanzada:
-  ```bash
-  pip install customtkinter
-
-## Características
-
-- **Paginación automática:** Calcula el número de página insertando saltos basados en la cantidad aproximada de caracteres visibles (por defecto 1500).
-- **Compatible con EPUB 3:** Inyecta etiquetas `<span epub:type="pagebreak">` e integra la lista de páginas en el archivo de navegación (`nav.xhtml` mediante `<nav epub:type="page-list">`).
-- **Seguro y validado:** No sobreescribe tu archivo original por defecto. Además, valida que el XML siga estando bien formado antes de empaquetar el nuevo EPUB.
-- **Sin dependencias externas:** Utiliza exclusivamente la biblioteca estándar de Python 3.
+- Interfaz gráfica creada con `CustomTkinter`.
+- Compatible con EPUB 2 y EPUB 3.
+- Calcula páginas aproximadas según la cantidad de caracteres visibles.
+- Respeta el orden de lectura definido en el `spine` del EPUB.
+- Permite seleccionar el archivo o capítulo desde el que debe comenzar la paginación.
+- Ignora etiquetas HTML, estilos y scripts al contar caracteres.
+- Añade marcadores de salto de página al contenido XHTML.
+- Actualiza la navegación del libro:
+  - Documento `nav.xhtml` en EPUB 3.
+  - Lista de páginas de `toc.ncx` en EPUB 2.
+- Crea un documento de navegación si el EPUB 3 no dispone de uno.
+- Actualiza la fecha de modificación del paquete EPUB 3.
+- Conserva la estructura interna del EPUB.
+- Guarda `mimetype` como primer archivo y sin compresión, tal como requiere el formato EPUB.
+- Admite documentos codificados en UTF-8 y Windows-1252.
+- Se adapta al modo claro u oscuro configurado en el sistema.
+- Ventana redimensionable.
 
 ## Requisitos
 
-- **Python 3.6 o superior**.
-- No se requiere instalar librerías adicionales mediante `pip`.
+- Python 3.10 o posterior recomendado.
+- `customtkinter`.
+- `tkinter`, incluido normalmente con Python en Windows y macOS.
+
+El resto de módulos utilizados forman parte de la biblioteca estándar de Python.
+
+## Instalación
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+cd TU_REPOSITORIO
+```
+
+También puedes descargar el repositorio como archivo ZIP desde GitHub y descomprimirlo.
+
+### 2. Crear un entorno virtual
+
+#### Windows PowerShell
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+#### macOS o Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Instalar las dependencias
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Si todavía no tienes un archivo `requirements.txt`, créalo con este contenido:
+
+```text
+customtkinter
+```
+
+En Windows también puedes instalar la dependencia directamente con:
+
+```powershell
+py -m pip install customtkinter
+```
 
 ## Uso
 
-Ejecuta el script desde tu terminal apuntando al archivo EPUB que deseas modificar:
+Ejecuta la aplicación desde la carpeta del proyecto.
 
-```bash
-python epub_paginador.py "mi_libro.epub"
+### Windows
+
+```powershell
+py epub_paginador_gui.py
 ```
 
-El script generará automáticamente un nuevo archivo llamado `mi_libro - paginado.epub` en el mismo directorio.
-
-### Opciones disponibles
+### macOS o Linux
 
 ```bash
-usage: epub_paginador.py [-h] [--chars CHARS] [--start-file START_FILE] [--output OUTPUT] input
-
-Añade paginación EPUB 3 aproximada a un EPUB.
-
-positional arguments:
-  input                 EPUB de entrada
-
-options:
-  -h, --help            Muestra este mensaje de ayuda y termina.
-  --chars CHARS         Caracteres visibles aproximados por página (por defecto: 1500).
-  --start-file START_FILE
-                        Archivo HTML/XHTML desde el que comienza la paginación. 
-                        Si se omite, intentará detectar el primer archivo de contenido 
-                        (ej: `index_split_000.html`).
-  --output OUTPUT       Ruta y nombre del EPUB de salida.
+python3 epub_paginador_gui.py
 ```
 
-## Ejemplos
+Después:
 
-**1. Ajustar el tamaño de la página (ej. 2000 caracteres por página):**
+1. Selecciona el archivo EPUB que quieres procesar.
+2. Configura la cantidad aproximada de caracteres por página.
+3. Si lo necesitas, indica el capítulo desde el que debe comenzar la paginación.
+4. Selecciona la ubicación del archivo de salida.
+5. Inicia el proceso.
+6. Abre el nuevo EPUB en tu lector habitual para comprobar el resultado.
+
+## ¿Cómo funciona?
+
+El programa abre el EPUB como un archivo ZIP y localiza su paquete OPF mediante `META-INF/container.xml`. A continuación, obtiene los capítulos siguiendo el orden definido en el `spine`.
+
+Para calcular las páginas, elimina temporalmente del recuento las etiquetas HTML, los estilos y los scripts. Después cuenta el texto visible e inserta marcadores de página según el valor configurado de caracteres por página.
+
+Finalmente, actualiza la navegación correspondiente a la versión del EPUB, valida los documentos XML principales y vuelve a empaquetar el libro.
+
+## Paginación aproximada
+
+La paginación generada no representa necesariamente las páginas físicas de una edición impresa. El número de páginas depende del valor de caracteres por página y de la estructura interna de cada EPUB.
+
+Dos libros con una longitud parecida pueden producir cantidades de páginas diferentes si utilizan capítulos, etiquetas o estructuras XHTML distintas.
+
+Para obtener un resultado más cercano a una edición concreta, ajusta el número de caracteres por página y vuelve a generar el EPUB.
+
+## Compatibilidad
+
+El programa está pensado para trabajar con:
+
+- EPUB 2 con navegación NCX.
+- EPUB 3 con documento de navegación XHTML.
+- EPUB que contienen capítulos XHTML o HTML declarados en el manifiesto.
+- EPUB con rutas internas relativas y nombres de archivo codificados.
+
+Algunos EPUB con una estructura dañada, XML no válido, contenido cifrado o gestión de derechos digitales pueden no procesarse correctamente.
+
+## Estructura recomendada del repositorio
+
+```text
+.
+├── epub_paginador_gui.py
+├── requirements.txt
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+## Archivo `.gitignore` recomendado
+
+```gitignore
+# Entornos virtuales
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Herramientas y editores
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos EPUB generados para pruebas
+output/
+```
+
+No añadas `*.epub` al archivo `.gitignore` si quieres incluir EPUB de ejemplo en el repositorio. Asegúrate de que tienes permiso para publicar cualquier libro de prueba.
+
+## Creación de un ejecutable opcional
+
+Puedes generar un ejecutable con PyInstaller:
+
 ```bash
-python epub_paginador.py "libro.epub" --chars 2000
+python -m pip install pyinstaller
+pyinstaller --noconfirm --onefile --windowed --name "EPUB-Page-Break-Generator" epub_paginador_gui.py
 ```
 
-**2. Especificar un archivo de salida personalizado:**
+El resultado se guardará en la carpeta `dist`.
+
+> La creación del ejecutable es opcional. Conviene probarlo en el mismo sistema operativo en el que se distribuirá.
+
+## Solución de problemas
+
+### `pip` no se reconoce como comando
+
+Utiliza `pip` a través de Python:
+
+```powershell
+py -m pip install -r requirements.txt
+```
+
+### No se encuentra `customtkinter`
+
+Instálalo en el mismo entorno desde el que ejecutas la aplicación:
+
 ```bash
-python epub_paginador.py "libro.epub" --output "libro_final.epub"
+python -m pip install customtkinter
 ```
 
-**3. Empezar a contar páginas desde un capítulo específico:**
-```bash
-python epub_paginador.py "libro.epub" --start-file "capitulo_01.xhtml"
+### Error al activar el entorno virtual en PowerShell
+
+Puedes permitir la ejecución únicamente para la sesión actual:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
 ```
 
-## ¿Cómo funciona internamente?
+### El resultado tiene demasiadas o muy pocas páginas
 
-1. **Descompresión:** Lee el EPUB origen y carga su contenido en memoria.
-2. **Análisis:** Busca los archivos HTML/XHTML que forman el contenido real del libro, ignorando el índice (TOC) y los menús de navegación.
-3. **Inyección:** Recorre los párrafos (`<p>`) contando los caracteres puramente visibles (sin etiquetas HTML). Cuando la suma alcanza el límite (`--chars`), inserta un marcador de salto de página EPUB 3.
-4. **Actualización de Metadatos:** Sobreescribe el `nav.xhtml` añadiendo el bloque `<nav epub:type="page-list">` para que los e-readers puedan renderizar la navegación por páginas. Actualiza la fecha de modificación (`dcterms:modified`) en el `content.opf`.
-5. **Empaquetado:** Genera un EPUB válido respetando que el archivo `mimetype` no vaya comprimido y sea el primer elemento del ZIP.
+Modifica el valor de caracteres por página. Un valor menor genera más páginas y un valor mayor genera menos páginas.
+
+### Un EPUB no se puede procesar
+
+Comprueba que:
+
+- El archivo se abre correctamente en otro lector.
+- No está protegido con gestión de derechos digitales.
+- Su estructura interna contiene `META-INF/container.xml` y un paquete OPF válido.
+- Los documentos XML y XHTML no están dañados.
+
+## Aviso importante
+
+Antes de procesar un libro, conserva una copia del archivo original. Aunque la aplicación genera un archivo nuevo, es recomendable verificar el resultado en varios lectores EPUB.
+
+Utiliza únicamente archivos para los que tengas los permisos necesarios. Este proyecto no elimina protecciones ni sistemas de gestión de derechos digitales.
+
+## Contribuciones
+
+Las mejoras y correcciones son bienvenidas:
+
+1. Crea un _fork_ del repositorio.
+2. Crea una rama para tu cambio:
+
+   ```bash
+   git checkout -b mejora/nombre-del-cambio
+   ```
+
+3. Guarda tus cambios con un mensaje descriptivo.
+4. Sube la rama a tu repositorio.
+5. Abre una _pull request_.
+
+## Autor
+
+Desarrollado por **Ernest Anguera Aixala**.
+
+## Licencia
+
+Este repositorio todavía no especifica una licencia.
+
+Antes de publicarlo, añade un archivo `LICENSE`. Si quieres que otras personas puedan utilizar, modificar y distribuir el proyecto de forma sencilla, puedes valorar una licencia permisiva como MIT. La elección de la licencia depende de cómo quieras compartir el código.
