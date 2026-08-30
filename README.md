@@ -245,6 +245,8 @@ Desarrollado por **Ernest Anguera Aixala**.
 
 ## Licencia
 
-Este repositorio todavía no especifica una licencia.
+Este proyecto está disponible bajo la **licencia MIT**.
 
-Antes de publicarlo, añade un archivo `LICENSE`. Si quieres que otras personas puedan utilizar, modificar y distribuir el proyecto de forma sencilla, puedes valorar una licencia permisiva como MIT. La elección de la licencia depende de cómo quieras compartir el código.
+Puedes utilizar, copiar, modificar y distribuir el software libremente, siempre que se incluya el aviso de copyright y la licencia original.
+
+Consulta el archivo [`LICENSE`](LICENSE) para ver el texto completo de la licencia.
